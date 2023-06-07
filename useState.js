@@ -1,33 +1,35 @@
-let states = [];
+const states = [];
 let renderCnt = 1;
-let stateKey = 0;
+let currentStateKey = 0;
 
 function useState(initialVal){
-  const key = stateKey;
+  const key = currentStateKey;
   if (states.length === key) {
     states.push(initialVal);
   }
   const state = states[key];
-  function setState(setter){
+  const setState = (setter) => {
     if(typeof setter === 'function'){
       const newState = setter.apply({}, [states[key]])
+      if(states[key] === newState) return;
       states[key] = newState;
     }else{
+      if(states[key] === setter) return
       states[key] = setter
     }
+
     render();
   }
 
-  stateKey += 1;
+  currentStateKey += 1;
 
   return [ state, setState ];
 }
 
-
 function MyComponent(){
   const [state , setState] = useState(0);
   function updateState(){
-    setState(state+1)
+    setState((cur) => cur + 1)
   }
   window.updateState = updateState
   return `
@@ -37,17 +39,27 @@ function MyComponent(){
 }
 function MySecond(){
   const [state , setState] = useState(0);
-  function updateState(){
-    setState(state+1)
+  function updateState2(){
+    setState(cur => cur + 1)
   }
-  window.updateState = updateState
+  window.updateState2 = updateState2
   return `
-    <button onclick="updateState()"> increate State2 </button>
+    <button onclick="updateState2()"> increate State2 </button>
     <span> ${state} :: is my state2</span>
   `
 }
+
+
+function debouncer(cb){
+  let nextFrameCallback = -1;
+  console.log(1)
+  return () => {
+    cancelAnimationFrame(nextFrameCallback);
+    nextFrameCallback = requestAnimationFrame(cb)
+  }
+}
+
 function render(){
-  renderCnt++;
   console.log(renderCnt + ' rendered.')
 
   document.body.innerHTML = `
@@ -56,7 +68,8 @@ function render(){
       ${MySecond()}
     </div>
   `
-  stateKey = 0;
+  renderCnt++;
+  currentStateKey = 0;
 }
 
-render()
+debouncer(render)
