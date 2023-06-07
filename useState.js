@@ -1,9 +1,9 @@
 const states = [];
 let renderCnt = 1;
-let currentStateKey = 0;
+let stateKey = 0;
 
 function useState(initialVal){
-  const key = currentStateKey;
+  const key = stateKey;
   if (states.length === key) {
     states.push(initialVal);
   }
@@ -21,7 +21,7 @@ function useState(initialVal){
     render();
   }
 
-  currentStateKey += 1;
+  stateKey += 1;
 
   return [ state, setState ];
 }
@@ -69,7 +69,6 @@ function render(){
     </div>
   `
   renderCnt++;
-  currentStateKey = 0;
+  stateKey = 0;
 }
-
-debouncer(render)
+render()
