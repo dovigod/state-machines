@@ -11,18 +11,17 @@ export class StateDispatcher{
     }
     runDispatchScheduler(){
         const debounceFrame = () => {
-          this.frame += 1;
-
-          if(this.frame > this.fps){
-            this.taskQueue.forEach((task) => task())
+          // this.frame += 1;
+          // if(this.frame > this.fps){
             if(this.taskQueue.length > 0){
+                this.taskQueue.forEach((task) => task())
+
                 this.onDispatch()
                 this.taskQueue = []
             }
-            this.frame = 0;
-          }
           requestAnimationFrame(debounceFrame)
         }
+        
 
         debounceFrame()
     }

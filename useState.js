@@ -52,16 +52,21 @@ function MySecond(){
   `
 }
 
-
-function debouncer(cb){
-  let nextFrameCallback = -1;
-  console.log(1)
-  return () => {
-    cancelAnimationFrame(nextFrameCallback);
-    nextFrameCallback = requestAnimationFrame(cb)
+function Multiple(){
+  const [s1 , ss1] = useState(0)
+  const [s2 , ss2] = useState(0)
+  function update(){
+    ss1(c => c+1);
+    ss2(c => c+1);
   }
-}
 
+  window.db = () => update()
+  return `
+    <div>
+      <button onclick="db()"> multiple state update!${s1} , ${s2}</button>
+    </div>
+  `
+}
 function render(){
   console.log(renderCnt + ' rendered.')
 
@@ -69,6 +74,7 @@ function render(){
     <div>
       ${MyComponent()}
       ${MySecond()}
+      ${Multiple()}
     </div>
   `
   renderCnt++;
