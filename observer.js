@@ -5,7 +5,7 @@ class StateSubscriber{
   //symbol , hash etc..
   subscribe(item){
     this.subscribers.push(item);
-    this.subscriberAction[item] = 
+    this.subscriberAction[item] = {}
   }
   unsubscribe(item){
     if(!this.subscribers) return null;
@@ -16,4 +16,5 @@ class StateSubscriber{
   notify(data){
     this.subscribers.forEach(subscriber => subscriber(data))
   }
+  
 }

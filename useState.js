@@ -1,3 +1,4 @@
+import { StateDispatcher } from './StateDispatcher.js'
 const states = [];
 let renderCnt = 1;
 let stateKey = 0;
@@ -9,16 +10,18 @@ function useState(initialVal){
   }
   const state = states[key];
   const setState = (setter) => {
+    let newState = null
     if(typeof setter === 'function'){
-      const newState = setter.apply({}, [states[key]])
+      newState = setter.apply({}, [states[key]])
       if(states[key] === newState) return;
       states[key] = newState;
     }else{
       if(states[key] === setter) return
-      states[key] = setter
+      newState = setter
     }
 
-    render();
+    dispatcher.pushTransition(() => {states[key] = newState})
+
   }
 
   stateKey += 1;
@@ -71,4 +74,7 @@ function render(){
   renderCnt++;
   stateKey = 0;
 }
+
+const dispatcher = new StateDispatcher(render)
+dispatcher.runDispatchScheduler()
 render()
