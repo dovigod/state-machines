@@ -1,4 +1,5 @@
 import { StateDispatcher } from './StateDispatcher.js'
+import { useEffect } from './useEffect.js';
 const states = [];
 let renderCnt = 1;
 let stateKey = 0;
@@ -19,9 +20,10 @@ function useState(initialVal){
       if(states[key] === setter) return
       newState = setter
     }
-
-    dispatcher.pushTransition(() => {states[key] = newState})
-
+    dispatcher.pushTransition({
+      state : states[key],
+      action : () => {states[key] = newState}
+    })
   }
 
   stateKey += 1;
@@ -45,6 +47,9 @@ function MySecond(){
   function updateState2(){
     setState(cur => cur + 1)
   }
+  useEffect(() => {
+    console.log('use Effect working!!')
+  },['a'])
   window.updateState2 = updateState2
   return `
     <button onclick="updateState2()"> increate State2 </button>
@@ -63,7 +68,9 @@ function Multiple(){
   window.db = () => update()
   return `
     <div>
-      <button onclick="db()"> multiple state update!${s1} , ${s2}</button>
+      <button onclick="db()"> multiple state update!</button>
+      <div>s1:: ${s1}</div>
+      <div>s2:: ${s2}</div>
     </div>
   `
 }
@@ -82,5 +89,6 @@ function render(){
 }
 
 const dispatcher = new StateDispatcher(render)
+console.log(dispatcher)
 dispatcher.runDispatchScheduler()
 render()
